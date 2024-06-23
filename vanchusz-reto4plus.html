@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bienvenide a Tudú</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+      rel="stylesheet"
+    />
+    <!--
+    DARK PRIMARY COLOR
+    #00796B
+
+    LIGHT PRIMARY COLOR
+    #B2DFDB
+
+    PRIMARY COLOR
+    #009688
+
+    TEXT / ICONS
+    #FFFFFF
+
+    ACCENT COLOR
+    #FFC107
+
+    PRIMARY TEXT
+    #212121
+
+    SECONDARY TEXT
+    #757575
+
+    DIVIDER COLOR
+    #BDBDBD
+    -->
+    <style>
+      * {
+        margin: 0px;
+        padding: 0px;
+        color: #212121;
+        font-family: "Red Hat Display", sans-serif;
+        font-size: 16px;
+      }
+      body {
+        background: #ededed;
+      }
+      header {
+        height: 80px;
+        background: #009688;
+      }
+      h1 {
+        margin-bottom: 10px;
+        color: #00796b;
+        font-size: 35px;
+      }
+      .filmina {
+        display: none;
+      }
+      #container {
+        padding: 15px 30px;
+        height: calc(100vh - 110px);
+      }
+      #fabNuevaTarea {
+        background: #FFC107;
+        color: #212121;
+        font-weight: bold;
+        font-size: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        position: fixed;
+        right: 30px;
+        bottom: 30px;
+        border: none;
+      }
+      #fabCerrar {
+        background: #FFC107;
+        color: #212121;
+        font-weight: bold;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 25px;
+        width: 25px;
+        border-radius: 5px;
+        position: fixed;
+        right: 30px;
+        top: 105px;
+        border: none;
+      }
+      
+      #butNuevaTarea {
+        background: #FFC107;
+        color: #212121;
+        font-weight: bold;
+        font-size: 21px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 35px;
+        width: 140px;
+        border-radius: 15px;
+        border: none;
+      }
+      li {
+        list-style: none;
+        padding: 5px;
+        margin-bottom: 2px;
+        display: grid;
+        background: #b2dfdb;
+        grid-template-columns: 40px 1fr 25px 25px;
+        width: 100%;
+      }
+      .liTareaHecha {
+        background: rgb(178, 223, 219, 0.5);
+      }
+      .divTareaHecha {
+        color: #757575;
+        text-decoration: line-through;
+      }
+      p {
+        margin-bottom: 10px;
+      }
+      textarea,
+      input,
+      select {
+        width: 100%;
+        border: 1px solid #00796b;
+        margin-bottom: 5px;
+        padding: 3px;
+      }
+      textarea {
+        height: 240px;
+      }
+      #divFrase {
+        font-size: 35px;
+        font-style: italic;
+        font-weight: 300;
+        font-family: "Times New Roman", Times, serif;
+        color: #757575;
+        margin-top: 80px;
+      }
+    </style>
+  </head>
+  <body>
+    <header></header>
+    <div id="container">
+      <section class="filmina" id="sctBienvenidx">
+        <div>
+          <h1>Bienvenidx</h1>
+          <p>Hola! Soy Tudú, tu mejor amigx en la organización de tareas.</p>
+          <p>
+            No hay tareas pendientes.<br />
+            Qué pachó? Posta no hay nada para hacer?
+          </p>
+        </div>
+        <div id="divFrase">
+          
+        </div>
+      </section>
+      <section class="filmina" id="sctListaTareas">
+        <h1>Lista de tareas</h1>
+        <ul id="ulTareas"></ul>
+      </section>
+      <section class="filmina" id="sctNuevaTarea">
+        <h1>Nueva tarea</h1>
+        <input type="text" id="txtTareaNombre" placeholder="Ingresá tu tarea" />
+        <select id="slctCategoria"></select>
+        <textarea  id="txtTareaDescripcion">Porfa, ingresá una descripción</textarea>
+        <button id="butNuevaTarea">Crear tarea!</button>
+      </section>
+      <section class="filmina" id="sctEstaTarea">
+      </section>
+      <button id="fabNuevaTarea">+</button>
+      <button id="fabCerrar">x</button>
+    </div>
+    <script>
+      /*
+        sctBienvenidx
+        sctListaTareas
+        sctNuevaTarea
+        sctEstaTarea
+        */
+      let sctBienvenidx = document.getElementById("sctBienvenidx");
+      let sctListaTareas = document.getElementById("sctListaTareas");
+      let sctNuevaTarea = document.getElementById("sctNuevaTarea");
+      let sctEstaTarea = document.getElementById("sctEstaTarea");
+      let divFrase = document.getElementById("divFrase");
+      let fabNuevaTarea = document.getElementById("fabNuevaTarea");
+      let fabCerrar = document.getElementById("fabCerrar");
+      let slctCategoria = document.getElementById("slctCategoria");
+      let txtTareaDescripcion = document.getElementById("txtTareaDescripcion");
+      let txtTareaNombre = document.getElementById("txtTareaNombre");
+      let ulTareas = document.getElementById("ulTareas");
+      
+      let arrayTareas = [];
+      if(localStorage.getItem("tareasGuardadas")){
+        console.log("Existe!");
+        
+        arrayTareas = JSON.parse(localStorage.getItem("tareasGuardadas"));
+      } else {
+        console.log("Noxiste!");
+    
+      }
+
+
+      const arrayFrases = [
+        "No pares hasta que no estés insanamente fucking orgullosx de vos mismo",
+        "La simplicidad conduce a mucha más felicidad",
+        "El 99.9% de la gente que te juzga, o tiene opiniones sobre vos, no tiene la mas puta idea de lo que está pasando realmente en tu vida",
+        "Si te despertás, y toda la gente que te importa tiene salud, es un gran día.",
+        "Hay 300 millones de formas de hacerlo. Encontrá la que funciona para vos.",
+        "Querés estar feliz por el resto de este año? Tené cero expectativas de lxs demás.",
+        "No estás perdidx. Solamente estás en una etapa temprana del proceso.",
+        "Encontrá algo que ames, incluso si esto implica dar un paso atrás.",
+        "Dejá de preocuparte por lo que tienen tus amigxs.",
+        "La paciencia es el mapa de tus ambiciones.",
+        "Tu mentalidad decide lo que se piensa y lo que no.",
+        "Derribar a otrx realmente no te eleva.",
+        "Nada grandioso es fácil.",
+      ];
+
+      const arrayCategorias = [
+        {emoji: "", nombre: "Seleccioná una categoría", valor:""},
+        {emoji: "🏠", nombre: "Hogar", valor:"hogar"},
+        {emoji: "🛒", nombre: "Compras", valor:"compras"},
+        {emoji: "💻", nombre: "Escritorio", valor:"escritorio"},
+        {emoji: "📜", nombre: "Trámites", valor:"tramites"},
+        {emoji: "👨‍👨‍👧‍👧", nombre: "Amigxs, amores y familia", valor:"amigues"},
+        {emoji: "💪", nombre: "Laburo", valor:"laburo"},
+        {emoji: "🛠️", nombre: "Taller", valor:"taller"},
+        {emoji: "🐙", nombre: "Otras", valor:"otras"}
+      ];
+      /*
+      let arrayTareas = [
+        {emoji: "🏠", nombre: "Sacar la basura", descripcion:"Despues  de las 21", estado: "incompleta"},
+        {emoji: "🛒", nombre: "Ir al super", descripcion:"Harina, Aceite, esto, lo otro", estado: "incompleta"},
+        {emoji: "🏠", nombre: "Colgar la ropa", descripcion:"La blanca y la de color", estado: "incompleta"},
+        {emoji: "💻", nombre: "Facturar 2 meses", descripcion:"Diciembre y enero", estado: "completa"},
+        {emoji: "👨‍👨‍👧‍👧", nombre: "Llamar al mecánico de Euge", descripcion:"4385-2556", estado: "incompleta"},
+        {emoji: "🛠️", nombre: "Arreglar el disyuntor", descripcion:"Me cago en Dios", estado: "completa"}
+      ]
+      */
+      
+     // localStorage.setItem("tareasGuardadas",JSON.stringify(arrayTareas));
+
+      //arrayPantallas es un array que contiene todas las filminas
+      const arrayPantallas = [
+        sctBienvenidx,
+        sctListaTareas,
+        sctNuevaTarea,
+        sctEstaTarea,
+      ];
+
+      //mostrar() oculta todos las filminas, y al final muestra la solicitada
+      const mostrar = (cualMostrar) => {
+        for (let i = 0; i < arrayPantallas.length; i++) {
+          //console.log(arrayPantallas[i].innerHTML, "---");
+          arrayPantallas[i].style.display = "none";
+        }
+
+
+        //Si vamos a mostrar bienvenidxs, hay que hacer la funcion random de la frase inspiradora
+        if (cualMostrar == "sctBienvenidx") {
+          let nroRandom = Math.floor(Math.random() * arrayFrases.length);
+
+          //fabCerrar es el boton que vuelve al listado. A veces se muestra, a veces no
+          fabCerrar.style.display = "none";
+          divFrase.innerHTML = `"${arrayFrases[nroRandom]}"`;
+        } else if(cualMostrar == "sctListaTareas"){
+          //fabCerrar es el boton que vuelve al listado. A veces se muestra, a veces no
+          fabCerrar.style.display = "none";
+          //Cargamos la lista de tareas
+          cargarListaTareas();
+        } else if(cualMostrar == "sctNuevaTarea"){
+          //fabCerrar es el boton que vuelve al listado. A veces se muestra, a veces no
+          fabCerrar.style.display = "block";
+        } else if(cualMostrar == "sctEstaTarea"){
+          //fabCerrar es el boton que vuelve al listado. A veces se muestra, a veces no
+          fabCerrar.style.display = "block";
+        }
+
+        //Por último, mostramos la filmina actual
+        let filminaActual = document.getElementById(cualMostrar);
+        filminaActual.style.display = "block";
+      };
+      const inicio = () => {
+        if(arrayTareas.length>0){
+          //si el array de tareas tiene tareas, mostramos el listado
+          mostrar("sctListaTareas");
+        } else {
+          //si no, mostramos el inicio
+          mostrar("sctBienvenidx");
+        }
+      }
+      //El listener del fab de nueva tarea
+      fabNuevaTarea.addEventListener("click", () => {
+        mostrar("sctNuevaTarea");
+      });
+
+      //El listener del fab del boton cerrar que vuelve al listado
+      fabCerrar.addEventListener("click", () => {
+        inicio();
+      });
+
+      //construimos el select de categorias
+      const cargarSelectCategorias = () => {
+        //console.log(arrayCategorias.length);
+          arrayCategorias.map((categoria) => {
+          slctCategoria.innerHTML += `<option value="${categoria.emoji}">${categoria.emoji} ${categoria.nombre}</option>`;
+        })
+      }
+
+      //Imprimimos la lista de tareas
+      const cargarListaTareas = () => {
+        ulTareas.innerHTML="";
+
+        //arrayTareas.map((tarea) => {
+        //Use for en vez de map porque me interesa usar el indice del array para ponerlos en los ids de los divs
+        let estadoEmoji = "🔲";
+        let estadoClass = "";
+        let liEstadoClass = "";
+        for(let c=0; c<arrayTareas.length; c++) {
+          //console.log(tarea);
+          tarea = arrayTareas[c];
+
+          if(tarea.estado=="incompleta"){
+            estadoEmoji = "🔲";
+            estadoClass = ``;
+            liEstadoClass = ``;
+
+          } else {
+            estadoEmoji = "✅";
+            estadoClass = `class="divTareaHecha" `;
+            liEstadoClass = ` class="liTareaHecha"`;
+          }
+          ulTareas.innerHTML+=`<li${liEstadoClass}>
+            <div id="divTareaEmoji${c}" onClick="tareaDetalle(${c})">${tarea.emoji}</div>
+            <div ${estadoClass}id="divTareaNombre${c}" onClick="tareaDetalle(${c})">${tarea.nombre}</div>
+            <div id="divTareaHecha${c}" onClick="tareaCambiarEstado(${c})">${estadoEmoji}</div>
+            <div id="divTareaHecha${c}" onClick="tareaEliminar(${c})">🗑️</div>
+          </li>`;
+
+        }
+      }
+      const tareaDetalle = (cual) =>{
+        tarea = arrayTareas[cual];
+
+        if(tarea.estado=="incompleta"){
+            estadoEmoji = "🔲";
+          } else {
+            estadoEmoji = "✅";
+          }
+        sctEstaTarea.innerHTML = `<h1>${tarea.emoji} ${tarea.nombre}</h1>
+        <p><br><strong>Estado:</strong> ${estadoEmoji} ${tarea.estado}</p>
+        <p><br>${tarea.descripcion}</p>`;
+        
+        mostrar("sctEstaTarea");
+      }
+      const tareaEliminar = (cual) =>{
+        if(confirm("Posta querés eliminar esta tarea?")){
+          arrayTareas.splice(cual,1);
+          localStorage.setItem("tareasGuardadas",JSON.stringify(arrayTareas));
+          inicio();
+        }
+      }
+      const tareaCambiarEstado = (cual) =>{
+        tarea = arrayTareas[cual];
+        if(tarea.estado=="incompleta"){
+          tarea.estado = "completa";
+        } else {
+            tarea.estado = "incompleta";
+        }
+        localStorage.setItem("tareasGuardadas",JSON.stringify(arrayTareas));
+        cargarListaTareas();
+      }
+
+      //El envio del formulario de nueva tarea
+      butNuevaTarea.addEventListener("click", () => {
+        if(txtTareaNombre.value==""){
+          alert("Por favor, ingresa el nombre de tu tarea");
+        } else if (slctCategoria.value==""){
+          alert("Por favor, seleccioná una categoría!\nAunque sea 'otras', che!");
+        } else{
+          if(txtTareaDescripcion.value=="Porfa, ingresá una descripción"){
+            txtTareaDescripcion.value="";
+          }
+          
+          arrayTareas.push({"emoji": slctCategoria.value, "nombre": txtTareaNombre.value, "descripcion": txtTareaDescripcion.value, "estado": "incompleta"});
+          localStorage.setItem("tareasGuardadas",JSON.stringify(arrayTareas));
+
+          //limpiamos el form
+          txtTareaNombre.value ="";
+          txtTareaDescripcion.value = "";
+          txtTareaDescripcion.innerHTML="Porfa, ingresá una descripción";
+
+          //cargamos el inicio, seguramente se va a cargar la lista de tareas
+          inicio();
+        }
+        //mostrar("sctListaTareas");
+        //alert(slctCategoria.value);
+        
+      });
+      txtTareaDescripcion.addEventListener("click", () => { 
+        if(txtTareaDescripcion.innerHTML=="Porfa, ingresá una descripción"){
+            txtTareaDescripcion.innerHTML="";
+        }
+      });
+
+      //mostrar("sctBienvenidx");
+      cargarSelectCategorias();
+      inicio();
+
+
+      //esto lo vamos a sacar:
+      //cargarListaTareas();
+      
+    </script>
+  </body>
+</html>
